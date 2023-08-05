@@ -3,20 +3,31 @@ using UnityEngine.XR.ARFoundation;
 using System.Collections.Generic;
 using UnityEngine.XR.ARSubsystems;
 using TMPro;
+using UnityEngine.UI;
 
 public class BoundingBoxController : MonoBehaviour
 {
-    public GameObject cylinderPrefab;
+    public GameObject PointPrefab;
     public GameObject previewObject;
     public TextMeshPro distanceTextPrefab; // 3D text prefab for distance display
     public Camera arCamera;
+    public ARSessionOrigin arSessionOrigin;
+
+    public GameObject PlaneInfinity;
+
+    public GameObject LinePrefab;
+    private GameObject LineInstance;
 
     private ARRaycastManager raycastManager;
-    public ARSessionOrigin arSessionOrigin;
     private bool isPlacingObject = false;
     private Vector3 firstPoint = Vector3.zero;
     private Vector3 SecondPoint = Vector3.zero;
     private GameObject distanceTextObject;
+
+    private bool initialPlane = true;
+
+    public LayerMask mask;
+    public Text deb;
 
     private void Awake()
     {
@@ -25,8 +36,14 @@ public class BoundingBoxController : MonoBehaviour
 
     private void Update()
     {
-
-        PlacePreviewObject();
+        if (initialPlane)
+        {
+            PlacePreviewObject();
+        }
+        else
+        {
+            placePReViewObjectOnPlan();
+        }
         
 
         if (Input.touchCount > 0)
@@ -35,7 +52,7 @@ public class BoundingBoxController : MonoBehaviour
             if (SecondPoint != Vector3.zero) return;
 
             Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began && isPlacingObject)
+            if (touch.phase == TouchPhase.Began)
             {
                 if (firstPoint == Vector3.zero)
                 {
@@ -63,21 +80,38 @@ public class BoundingBoxController : MonoBehaviour
             previewObject.SetActive(true);
             previewObject.transform.position = hitPose.position;
             previewObject.transform.rotation = hitPose.rotation;
-            isPlacingObject = true;
+
+            PlaneInfinity.SetActive(true);
+            PlaneInfinity.transform.position = hitPose.position;
+            PlaneInfinity.transform.rotation = hitPose.rotation;
+
+            initialPlane = false;
+        }
+    }
+
+    private void placePReViewObjectOnPlan()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(arCamera.transform.position, arCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, mask))
+        {
+            previewObject.SetActive(true);
+           // previewObject.transform.position = hit.point;
+
+            previewObject.transform.position = Vector3.Lerp(previewObject.transform.position, hit.point, Time.deltaTime * 2);
+            deb.text = "HIT" + hit.transform.gameObject.name;
+        }
+        else
+        {
+            Debug.DrawRay(arCamera.transform.position, arCamera.transform.TransformDirection(Vector3.forward) * 1000, Color.white);
+            Debug.Log("Did not Hit");
+            deb.text = "NOT HIT";
         }
     }
 
     private void PlaceObject()
     {
-        Vector2 screenCenter = new Vector2(Screen.width / 2, Screen.height / 2);
-        List<ARRaycastHit> hits = new List<ARRaycastHit>();
-        if (raycastManager.Raycast(screenCenter, hits, TrackableType.PlaneWithinPolygon))
-        {
-            Pose hitPose = hits[0].pose;
-            Instantiate(cylinderPrefab, hitPose.position, hitPose.rotation);
-            previewObject.SetActive(false);
-            isPlacingObject = false;
-        }
+            Instantiate(PointPrefab, previewObject.transform.position, previewObject.transform.rotation);
+            previewObject.SetActive(false);  
     }
 
     private void UpdateDistanceText()
@@ -100,16 +134,41 @@ public class BoundingBoxController : MonoBehaviour
             Vector3 lookDirection = arCamera.transform.position - distanceTextObject.transform.position;
             Quaternion lookRotation = Quaternion.LookRotation(lookDirection, Vector3.up);
 
-            // Apply an additional rotation of 180 degrees around the y-axis
             Quaternion finalRotation = lookRotation * Quaternion.Euler(0f, 180f, 0f);
             distanceTextObject.transform.rotation = finalRotation;
 
 
             Vector3 midpoint = (firstPoint + currentSecondPoint) / 2f;
-            distanceTextObject.transform.position = midpoint;
+
+            if (SecondPoint == Vector3.zero)
+              distanceTextObject.transform.position = new Vector3(previewObject.transform.position.x, previewObject.transform.position.y + 0.1f, previewObject.transform.position.z);
+            else
+              distanceTextObject.transform.position = new Vector3(midpoint.x, midpoint.y + 0.1f, midpoint.z); ;
 
             TextMeshPro tmpText = distanceTextObject.GetComponent<TextMeshPro>();
-            tmpText.text = $"{distance:F2}meter"; // Display the calculated real-world distance
+            tmpText.text = $"{distance:F2}m";
+
+            // LINE
+            if (LineInstance == null)
+            {
+                LineInstance = Instantiate(LinePrefab, midpoint, Quaternion.identity);
+            }
+            else
+            {
+                LineInstance.transform.position = midpoint;
+
+                Vector3 forward = currentSecondPoint - firstPoint;
+                Quaternion rotation = Quaternion.LookRotation(forward, Vector3.up);
+
+                LineInstance.transform.rotation = rotation * Quaternion.Euler(90f, 0f, 0f);
+
+                float Linedistance = Vector3.Distance(firstPoint, currentSecondPoint);
+                LineInstance.transform.localScale = new Vector3(LineInstance.transform.localScale.x, Linedistance / 2, LineInstance.transform.localScale.z);
+            }
+
+            //LINE
+
+
         }
         else if (distanceTextObject != null)
         {
