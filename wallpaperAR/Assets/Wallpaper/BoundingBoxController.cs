@@ -97,7 +97,7 @@ public class BoundingBoxController : MonoBehaviour
             previewObject.SetActive(true);
            // previewObject.transform.position = hit.point;
 
-            previewObject.transform.position = Vector3.Lerp(previewObject.transform.position, hit.point, Time.deltaTime * 2);
+            previewObject.transform.position = Vector3.Lerp(previewObject.transform.position, hit.point, Time.deltaTime * 8);
             deb.text = "HIT" + hit.transform.gameObject.name;
         }
         else
