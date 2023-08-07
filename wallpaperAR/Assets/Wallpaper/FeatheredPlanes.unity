@@ -235,9 +235,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   point1: {fileID: 594853997}
   point2: {fileID: 427269146}
-  planePrefab: {fileID: 26468408197812477, guid: 154450e94ee02564d98f5ca54c3b0ea5,
+  planePrefab: {fileID: 6791560646075985281, guid: 154450e94ee02564d98f5ca54c3b0ea5,
     type: 3}
-  scaleval: 0
+  scaleval: 1
 --- !u!4 &252414920
 Transform:
   m_ObjectHideFlags: 0
@@ -687,7 +687,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1015722065
 GameObject:
@@ -1280,7 +1280,7 @@ PrefabInstance:
     - target: {fileID: 4574054286760160519, guid: dd7fa85b758bf3c47963fcf0fd6cf296,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4574054286760160519, guid: dd7fa85b758bf3c47963fcf0fd6cf296,
         type: 3}

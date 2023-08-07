@@ -10,6 +10,8 @@ public class ConnectPointsWithPlane : MonoBehaviour
 
     public float scaleval;
 
+    private Vector2 newTiling;
+
     private void Update()
     {
         if (point1 == null || point2 == null || planePrefab == null)
@@ -36,27 +38,34 @@ public class ConnectPointsWithPlane : MonoBehaviour
             Quaternion rotation = Quaternion.LookRotation(direction, Vector3.back);
 
             // Apply rotation to the plane
-            planeInstance.transform.rotation = rotation;
+            planeInstance.transform.rotation = new Quaternion(rotation.x, rotation.y , rotation.z , rotation.w);
+            planeInstance.transform.eulerAngles = new Vector3(planeInstance.transform.eulerAngles.x + 90, planeInstance.transform.eulerAngles.y, planeInstance.transform.eulerAngles.z);
 
             // Calculate scale along x-axis to fit exactly between points
             float distance = Vector3.Distance(point1.position, point2.position);
 
             // Adjust plane scale to fit between points
             Vector3 planeScale = planeInstance.transform.localScale;
-            planeScale.z = distance ;  // Divide by 2 to account for both sides of the plane
+            planeScale.x = distance ;  
+            newTiling.x = distance / 2;
             planeInstance.transform.localScale = planeScale;
         }
 
-        ScalePlaneX(scaleval);
+        ScalePlaneZ(scaleval);
     }
-    public void ScalePlaneX(float value)
+    public void ScalePlaneZ(float value)
     {
         if (planeInstance != null)
         {
             Vector3 scale = planeInstance.transform.localScale;
-            scale.x = Mathf.Lerp(0.3f, 100, value / 100); // Lerp between 0.5 and 1 based on the input value
+            scale.z = Mathf.Lerp(0.1f, 100, value / 100); 
             planeInstance.transform.localScale = scale;
-            planeInstance.transform.position = new Vector3(planeInstance.transform.position.x, scale.x / 2 , planeInstance.transform.position.z);
+            planeInstance.transform.position = new Vector3(planeInstance.transform.position.x, scale.z / 2 , planeInstance.transform.position.z);
+
+            Renderer renderer = planeInstance.GetComponent<Renderer>();
+            Material material = renderer.material;
+            newTiling.y = scale.z / 2;
+            material.mainTextureScale = newTiling;
         }
     }
 }
