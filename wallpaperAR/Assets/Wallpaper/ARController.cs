@@ -5,19 +5,27 @@ using UnityEngine.XR.ARSubsystems;
 using TMPro;
 using UnityEngine.UI;
 
-public class BoundingBoxController : MonoBehaviour
+public class ARController : MonoBehaviour
 {
+
+    public DrawWallController DrawWallControlker;
+
     public GameObject PointPrefab;
     public GameObject previewObject;
-    public TextMeshPro distanceTextPrefab; // 3D text prefab for distance display
+    public TextMeshPro distanceTextPrefab; 
     public Camera arCamera;
     public ARSessionOrigin arSessionOrigin;
 
     public GameObject PlaneInfinity;
 
     public GameObject LinePrefab;
-    private GameObject LineInstance;
+    
+    
+    public LayerMask mask;
+    public Text deb;
 
+
+    private GameObject LineInstance;
     private ARRaycastManager raycastManager;
     private bool isPlacingObject = false;
     private Vector3 firstPoint = Vector3.zero;
@@ -26,12 +34,12 @@ public class BoundingBoxController : MonoBehaviour
 
     private bool initialPlane = true;
 
-    public LayerMask mask;
-    public Text deb;
+    private List<Transform> points;
 
     private void Awake()
     {
         raycastManager = GetComponent<ARRaycastManager>();
+        points = new List<Transform>();
     }
 
     private void Update()
@@ -111,7 +119,8 @@ public class BoundingBoxController : MonoBehaviour
     private void PlaceObject()
     {
             Instantiate(PointPrefab, previewObject.transform.position, previewObject.transform.rotation);
-            previewObject.SetActive(false);  
+            previewObject.SetActive(false);
+            points.Add(previewObject.transform);
     }
 
     private void UpdateDistanceText()
@@ -167,6 +176,8 @@ public class BoundingBoxController : MonoBehaviour
             }
 
             //LINE
+            if(points.Count == 2)
+             DrawWallControlker.Setpoints(firstPoint,currentSecondPoint);
 
 
         }
