@@ -42,8 +42,27 @@ public class ARController : MonoBehaviour
         points = new List<Transform>();
     }
 
+    private float ConvertUnityAngle(float unityAngle)
+    {
+        // Convert the angle to a representation where angles after 0 show up as -1
+        float convertedAngle = unityAngle % 360f;
+        if (convertedAngle > 180f)
+        {
+            convertedAngle -= 360f;
+        }
+        return convertedAngle;
+    }
+
     private void Update()
     {
+        float convertedAngle = ConvertUnityAngle(Camera.main.transform.eulerAngles.x);
+
+        Debug.Log("Converted Angle: " + convertedAngle);
+
+        deb.text = "Converted Angle: " + convertedAngle;
+
+
+
         if (initialPlane)
         {
             PlacePreviewObject();
@@ -106,13 +125,11 @@ public class ARController : MonoBehaviour
            // previewObject.transform.position = hit.point;
 
             previewObject.transform.position = Vector3.Lerp(previewObject.transform.position, hit.point, Time.deltaTime * 8);
-            deb.text = "HIT" + hit.transform.gameObject.name;
         }
         else
         {
             Debug.DrawRay(arCamera.transform.position, arCamera.transform.TransformDirection(Vector3.forward) * 1000, Color.white);
             Debug.Log("Did not Hit");
-            deb.text = "NOT HIT";
         }
     }
 

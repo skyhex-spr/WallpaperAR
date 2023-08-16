@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.XR.ARFoundation;
 
 public class DrawWallController : MonoBehaviour
 {
@@ -13,10 +14,24 @@ public class DrawWallController : MonoBehaviour
     private Vector3 point1 = Vector3.zero;
     private Vector3 point2 = Vector3.zero;
 
+    public Transform objectToScale;
+    public float rotationScaleFactor = 0.5f;
+    public float maxScale = 10f;
+
+    private ARCameraManager arCameraManager;
+
+
+    private void Start()
+    {
+        arCameraManager = FindObjectOfType<ARCameraManager>();
+    }
+
+
     public void Setpoints(Vector3 pointone, Vector3 pointtwo)
     {
         point1 = pointone;  
         point2 = pointtwo;
+
     }
 
     private void Update()
@@ -58,8 +73,26 @@ public class DrawWallController : MonoBehaviour
             planeInstance.transform.localScale = planeScale;
         }
 
-        ScalePlaneZ(scaleval);
+        ScalePlaneZ(1);
+        SetWallSize();
+
     }
+
+    public void SetWallSize()
+    {
+        if (arCameraManager == null || !arCameraManager.enabled)
+            return;
+
+        // Get the y-axis rotation of the ARCamera
+        float cameraRotationY = arCameraManager.transform.rotation.eulerAngles.x;
+
+        // Normalize the rotation value to a larger range for scaling
+        float normalizedRotation = cameraRotationY / 360f;
+
+
+      //  ScalePlaneZ(newScaleVector.z);
+    }
+
     public void ScalePlaneZ(float value)
     {
         if (planeInstance != null)
