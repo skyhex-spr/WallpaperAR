@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityEngine.XR.ARFoundation;
 
 public class DrawWallController : MonoBehaviour
@@ -21,6 +22,15 @@ public class DrawWallController : MonoBehaviour
     private ARCameraManager arCameraManager;
 
 
+    private float IntialWallHeight = 0.1f;
+    private float WallHeight;
+    public float LastAngle { get; private set; }
+    public float IntialAngle { get; private set; }
+
+    // Wall height Lerp 
+    public float lerpDuration = 30.0f;
+    private float currentTime = 0.0f;
+
     private void Start()
     {
         arCameraManager = FindObjectOfType<ARCameraManager>();
@@ -29,7 +39,7 @@ public class DrawWallController : MonoBehaviour
 
     public void Setpoints(Vector3 pointone, Vector3 pointtwo)
     {
-        point1 = pointone;  
+        point1 = pointone;
         point2 = pointtwo;
 
     }
@@ -48,6 +58,10 @@ public class DrawWallController : MonoBehaviour
         {
             // Instantiate plane prefab at midpoint if not already instantiated
             planeInstance = Instantiate(WallPrefab, midpoint, Quaternion.identity);
+            planeInstance.SetActive(false);
+            LastAngle = ARController.Instance.ConvertUnityAngle(Camera.main.transform.eulerAngles.x);
+            IntialAngle = LastAngle;
+            planeInstance.transform.localScale = new Vector3(1,0.01f,IntialWallHeight);
         }
         else
         {
@@ -59,8 +73,8 @@ public class DrawWallController : MonoBehaviour
             Quaternion rotation = Quaternion.LookRotation(direction, Vector3.back);
 
             // Apply rotation to the plane
-          
-            planeInstance.transform.rotation = new Quaternion(rotation.x, rotation.y , rotation.z , rotation.w);
+
+            planeInstance.transform.rotation = new Quaternion(rotation.x, rotation.y, rotation.z, rotation.w);
             planeInstance.transform.eulerAngles = new Vector3(planeInstance.transform.eulerAngles.x + 90, planeInstance.transform.eulerAngles.y, planeInstance.transform.eulerAngles.z);
 
             // Calculate scale along x-axis to fit exactly between points
@@ -68,13 +82,14 @@ public class DrawWallController : MonoBehaviour
 
             // Adjust plane scale to fit between points
             Vector3 planeScale = planeInstance.transform.localScale;
-            planeScale.x = distance ;  
+            planeScale.x = distance;
             newTiling.x = distance / 2;
             planeInstance.transform.localScale = planeScale;
+
+            SetWallSize();
         }
 
-        ScalePlaneZ(1);
-        SetWallSize();
+
 
     }
 
@@ -83,35 +98,70 @@ public class DrawWallController : MonoBehaviour
         if (arCameraManager == null || !arCameraManager.enabled)
             return;
 
-        // Get the y-axis rotation of the ARCamera
-        float cameraRotationY = arCameraManager.transform.rotation.eulerAngles.x;
 
-        // Normalize the rotation value to a larger range for scaling
-        float normalizedRotation = cameraRotationY / 360f;
+        float Angle = ARController.Instance.ConvertUnityAngle(Camera.main.transform.eulerAngles.x);
 
+        Vector3 scale = planeInstance.transform.localScale;
 
-      //  ScalePlaneZ(newScaleVector.z);
+        float ditance = Mathf.Abs(Angle - LastAngle);
+
+        if (Mathf.Abs((Angle - IntialAngle)) < 2)
+        {
+            LastAngle = IntialAngle;
+            WallHeight = IntialWallHeight;
+            ARController.Instance.deb.text = "Near To Intial";
+        }
+        else
+        {
+            if (ditance >= 2f)
+            {
+                if(Angle < LastAngle)
+                    WallHeight = WallHeight + (0.06f * ditance);
+                else
+                    WallHeight = WallHeight - (0.06f * ditance);
+
+                LastAngle = Angle;
+                ARController.Instance.deb.text = LastAngle.ToString();
+            }
+        }
+
+        ScalePlaneZ(WallHeight);
     }
 
     public void ScalePlaneZ(float value)
     {
-        if (planeInstance != null)
+
+        Vector3 scale = planeInstance.transform.localScale;
+
+        if (value < IntialWallHeight)
+            value = IntialWallHeight;
+
+        currentTime += Time.deltaTime;
+        float lerpFactor = Mathf.Clamp01(currentTime / lerpDuration);
+
+        float newscale = Mathf.Lerp(IntialWallHeight, 90f, value / 90f);
+        scale.z = Mathf.Lerp(scale.z, newscale, lerpFactor);
+
+        if (lerpFactor >= 1.0f)
         {
-            Vector3 scale = planeInstance.transform.localScale;
-            scale.z = Mathf.Lerp(0.1f, 100f, value / 100f);
-            planeInstance.transform.localScale = scale;
-
-            Vector3 pivotOffset = Vector3.up * (scale.z / 2);
-            planeInstance.transform.position += pivotOffset;
-
-            Renderer renderer = planeInstance.GetComponent<Renderer>();
-            Material material = renderer.material;
-
-            Vector2 newTiling = material.mainTextureScale;
-            newTiling.y = scale.z / 2f;
-            material.mainTextureScale = newTiling;
+            currentTime = 0.0f;
         }
+
+        planeInstance.transform.localScale = scale;
+
+        Vector3 pivotOffset = Vector3.up * (scale.z / 2);
+        planeInstance.transform.position += pivotOffset;
+
+        Renderer renderer = planeInstance.GetComponent<Renderer>();
+        Material material = renderer.material;
+
+        Vector2 newTiling = material.mainTextureScale;
+        newTiling.y = scale.z / 2f;
+        material.mainTextureScale = newTiling;
+
+        planeInstance.SetActive(true);
+
     }
 
-  
+
 }

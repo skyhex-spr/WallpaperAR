@@ -8,6 +8,8 @@ using UnityEngine.UI;
 public class ARController : MonoBehaviour
 {
 
+    public static ARController Instance;
+
     public DrawWallController DrawWallControlker;
 
     public GameObject PointPrefab;
@@ -23,7 +25,6 @@ public class ARController : MonoBehaviour
     
     public LayerMask mask;
     public Text deb;
-
 
     private GameObject LineInstance;
     private ARRaycastManager raycastManager;
@@ -42,24 +43,18 @@ public class ARController : MonoBehaviour
         points = new List<Transform>();
     }
 
-    private float ConvertUnityAngle(float unityAngle)
+    private void Start()
     {
-        // Convert the angle to a representation where angles after 0 show up as -1
-        float convertedAngle = unityAngle % 360f;
-        if (convertedAngle > 180f)
-        {
-            convertedAngle -= 360f;
-        }
-        return convertedAngle;
+        Instance = this;
     }
+
+
 
     private void Update()
     {
         float convertedAngle = ConvertUnityAngle(Camera.main.transform.eulerAngles.x);
 
-        Debug.Log("Converted Angle: " + convertedAngle);
-
-        deb.text = "Converted Angle: " + convertedAngle;
+        //deb.text = "Converted Angle: " + convertedAngle;
 
 
 
@@ -202,5 +197,16 @@ public class ARController : MonoBehaviour
         {
             Destroy(distanceTextObject);
         }
+    }
+
+    public float ConvertUnityAngle(float unityAngle)
+    {
+        // Convert the angle to a representation where angles after 0 show up as -1
+        float convertedAngle = unityAngle % 360f;
+        if (convertedAngle > 180f)
+        {
+            convertedAngle -= 360f;
+        }
+        return convertedAngle;
     }
 }

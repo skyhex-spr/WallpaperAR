@@ -1098,7 +1098,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   deb: {fileID: 203768041}
-  angleInDegrees: 450
 --- !u!114 &1335839539
 MonoBehaviour:
   m_ObjectHideFlags: 0
