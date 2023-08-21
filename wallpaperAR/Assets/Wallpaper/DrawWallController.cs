@@ -113,12 +113,12 @@ public class DrawWallController : MonoBehaviour
         }
         else
         {
-            if (ditance >= 2f)
+            if (ditance >= 1f)
             {
                 if(Angle < LastAngle)
-                    WallHeight = WallHeight + (0.06f * ditance);
+                    WallHeight = WallHeight + (0.03f * ditance);
                 else
-                    WallHeight = WallHeight - (0.06f * ditance);
+                    WallHeight = WallHeight - (0.03f * ditance);
 
                 LastAngle = Angle;
                 ARController.Instance.deb.text = LastAngle.ToString();
