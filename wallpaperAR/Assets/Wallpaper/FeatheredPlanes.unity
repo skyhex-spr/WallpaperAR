@@ -250,10 +250,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WallPrefab: {fileID: 6791560646075985281, guid: 154450e94ee02564d98f5ca54c3b0ea5,
     type: 3}
-  scaleval: 0.5
-  objectToScale: {fileID: 0}
   rotationScaleFactor: 0.1
   maxScale: 10
+  lerpDuration: 30
 --- !u!1 &282840810
 GameObject:
   m_ObjectHideFlags: 0

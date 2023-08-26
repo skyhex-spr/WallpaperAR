@@ -9,13 +9,11 @@ public class DrawWallController : MonoBehaviour
 
     private GameObject planeInstance;
 
-    public float scaleval;
     private Vector2 newTiling;
 
     private Vector3 point1 = Vector3.zero;
     private Vector3 point2 = Vector3.zero;
 
-    public Transform objectToScale;
     public float rotationScaleFactor = 0.5f;
     public float maxScale = 10f;
 
@@ -103,27 +101,11 @@ public class DrawWallController : MonoBehaviour
 
         Vector3 scale = planeInstance.transform.localScale;
 
-        float ditance = Mathf.Abs(Angle - LastAngle);
+        float ditance =  LastAngle - Angle;
 
-        if (Mathf.Abs((Angle - IntialAngle)) < 2)
-        {
-            LastAngle = IntialAngle;
-            WallHeight = IntialWallHeight;
-            ARController.Instance.deb.text = "Near To Intial";
-        }
-        else
-        {
-            if (ditance >= 1f)
-            {
-                if(Angle < LastAngle)
-                    WallHeight = WallHeight + (0.03f * ditance);
-                else
-                    WallHeight = WallHeight - (0.03f * ditance);
+        // WallHeight = 1 + (0.03f * ditance);
 
-                LastAngle = Angle;
-                ARController.Instance.deb.text = LastAngle.ToString();
-            }
-        }
+        WallHeight = Mathf.Clamp(0.5f + (0.05f * ditance), 0.1f, 8f);
 
         ScalePlaneZ(WallHeight);
     }
@@ -136,16 +118,14 @@ public class DrawWallController : MonoBehaviour
         if (value < IntialWallHeight)
             value = IntialWallHeight;
 
-        currentTime += Time.deltaTime;
-        float lerpFactor = Mathf.Clamp01(currentTime / lerpDuration);
+        float distanceToCube = Vector3.Distance(Camera.main.transform.position, planeInstance.transform.position);
 
-        float newscale = Mathf.Lerp(IntialWallHeight, 90f, value / 90f);
-        scale.z = Mathf.Lerp(scale.z, newscale, lerpFactor);
+        float distanceFactor = Mathf.InverseLerp(1, 5, distanceToCube);
 
-        if (lerpFactor >= 1.0f)
-        {
-            currentTime = 0.0f;
-        }
+        value = Mathf.Lerp(value, value * distanceFactor, 0.5f);
+
+        scale.z = value;// Mathf.Lerp(scale.z, newscale, lerpFactor);
+
 
         planeInstance.transform.localScale = scale;
 
