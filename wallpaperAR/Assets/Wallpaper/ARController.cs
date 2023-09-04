@@ -52,12 +52,6 @@ public class ARController : MonoBehaviour
 
     private void Update()
     {
-        float convertedAngle = ConvertUnityAngle(Camera.main.transform.eulerAngles.x);
-
-        //deb.text = "Converted Angle: " + convertedAngle;
-
-
-
         if (initialPlane)
         {
             PlacePreviewObject();
