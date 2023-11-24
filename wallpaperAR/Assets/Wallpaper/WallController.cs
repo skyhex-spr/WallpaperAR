@@ -4,19 +4,21 @@ using UnityEngine;
 
 public class WallController : MonoBehaviour
 {
-
+    [HideInInspector]
+    public Renderer renderer;
     private Material material;
     private Vector3 previousScale;
 
     public bool IsSquare = true;
     public int TileX = 2;
     public int TileY = 2;
+
     // Start is called before the first frame update
     void Start()
     {
         GetComponent<MeshRenderer>().material.renderQueue = 3002;
 
-        Renderer renderer = GetComponent<Renderer>();
+        renderer = GetComponent<Renderer>();
         if (renderer != null)
         {
             material = renderer.material;
@@ -31,6 +33,11 @@ public class WallController : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+        SetTile();
+    }
+
+    void SetTile()
     {
         if (transform.localScale != previousScale)
         {
@@ -52,5 +59,11 @@ public class WallController : MonoBehaviour
 
 
         material.mainTextureScale = new Vector2(xTiling, zTiling);
+    }
+
+    public void ChangeMaterial(Material mat)
+    {
+        GetComponent<Renderer>().material = mat;
+        SetTile();
     }
 }
