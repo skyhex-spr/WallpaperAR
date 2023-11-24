@@ -1,21 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class WallController : MonoBehaviour
+public class TilingAdjuster : MonoBehaviour
 {
-
     private Material material;
     private Vector3 previousScale;
 
-    public bool IsSquare = true;
-    public int TileX = 2;
-    public int TileY = 2;
-    // Start is called before the first frame update
     void Start()
     {
-        GetComponent<MeshRenderer>().material.renderQueue = 3002;
-
+        // Assuming the material is assigned to the renderer of the object
         Renderer renderer = GetComponent<Renderer>();
         if (renderer != null)
         {
@@ -29,9 +21,9 @@ public class WallController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
+        // Check if the scale has changed
         if (transform.localScale != previousScale)
         {
             UpdateTiling();
@@ -42,14 +34,8 @@ public class WallController : MonoBehaviour
     void UpdateTiling()
     {
         // Adjust the tiling based on the inverse of the scale
-        float xTiling = TileX * (transform.localScale.x);
-
-        float zTiling = 0;
-        if (!IsSquare)
-          zTiling = TileY * (transform.localScale.z + 1);
-        else
-          zTiling = TileY * (transform.localScale.z);
-
+        float xTiling = 6f * transform.localScale.x;
+        float zTiling = 6f * transform.localScale.z;
 
         material.mainTextureScale = new Vector2(xTiling, zTiling);
     }

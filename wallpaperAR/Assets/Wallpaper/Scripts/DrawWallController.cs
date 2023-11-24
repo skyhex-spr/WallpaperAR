@@ -25,10 +25,6 @@ public class DrawWallController : MonoBehaviour
     public float LastAngle { get; private set; }
     public float IntialAngle { get; private set; }
 
-    // Wall height Lerp 
-    public float lerpDuration = 30.0f;
-    private float currentTime = 0.0f;
-
     private void Start()
     {
         arCameraManager = FindObjectOfType<ARCameraManager>();
