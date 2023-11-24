@@ -252,6 +252,8 @@ MonoBehaviour:
     type: 3}
   rotationScaleFactor: 0.1
   maxScale: 10
+  metterheight: 0
+  HeightDisplayPrefab: {fileID: 0}
 --- !u!1 &282840810
 GameObject:
   m_ObjectHideFlags: 0
@@ -1096,6 +1098,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   deb: {fileID: 203768041}
+  Width: 0
 --- !u!114 &1335839539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1218,7 +1221,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6791560646285294588}
   m_LocalRotation: {x: 0, y: 0.7071068, z: -0.7071068, w: 0}
-  m_LocalPosition: {x: -1.3122, y: 0.7265, z: 0}
+  m_LocalPosition: {x: -1.3122, y: 0.7265, z: -0.06}
   m_LocalScale: {x: 2, y: 0.01, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1317,9 +1320,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 6791560646285294588}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8678fa79858353343bc711c4a854fcb8, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b807702692659041b298f08135d9f17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsSquare: 1
-  TileX: 2
-  TileY: 2

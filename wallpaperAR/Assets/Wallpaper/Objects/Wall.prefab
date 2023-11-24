@@ -111,6 +111,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8678fa79858353343bc711c4a854fcb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsSquare: 1
+  TileX: 2
+  TileY: 2
 --- !u!114 &1053332191
 MonoBehaviour:
   m_ObjectHideFlags: 0

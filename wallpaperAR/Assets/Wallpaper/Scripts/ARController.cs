@@ -14,15 +14,15 @@ public class ARController : MonoBehaviour
 
     public GameObject PointPrefab;
     public GameObject previewObject;
-    public TextMeshPro distanceTextPrefab; 
+    public TextMeshPro distanceTextPrefab;
     public Camera arCamera;
     public ARSessionOrigin arSessionOrigin;
 
     public GameObject PlaneInfinity;
 
     public GameObject LinePrefab;
-    
-    
+
+
     public LayerMask mask;
     public Text deb;
 
@@ -37,15 +37,17 @@ public class ARController : MonoBehaviour
 
     private List<Transform> points;
 
+    public float Width;
+
     private void Awake()
     {
         raycastManager = GetComponent<ARRaycastManager>();
         points = new List<Transform>();
+        Instance = this;
     }
 
     private void Start()
     {
-        Instance = this;
     }
 
 
@@ -60,7 +62,7 @@ public class ARController : MonoBehaviour
         {
             placePReViewObjectOnPlan();
         }
-        
+
 
         if (Input.touchCount > 0)
         {
@@ -111,7 +113,7 @@ public class ARController : MonoBehaviour
         if (Physics.Raycast(arCamera.transform.position, arCamera.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, mask))
         {
             previewObject.SetActive(true);
-           // previewObject.transform.position = hit.point;
+            // previewObject.transform.position = hit.point;
 
             previewObject.transform.position = Vector3.Lerp(previewObject.transform.position, hit.point, Time.deltaTime * 8);
         }
@@ -124,9 +126,9 @@ public class ARController : MonoBehaviour
 
     private void PlaceObject()
     {
-            Instantiate(PointPrefab, previewObject.transform.position, previewObject.transform.rotation);
-            previewObject.SetActive(false);
-            points.Add(previewObject.transform);
+        Instantiate(PointPrefab, previewObject.transform.position, previewObject.transform.rotation);
+        previewObject.SetActive(false);
+        points.Add(previewObject.transform);
     }
 
     private void UpdateDistanceText()
@@ -138,7 +140,7 @@ public class ARController : MonoBehaviour
             Vector3 worldPosition1 = arSessionOrigin.transform.TransformPoint(firstPoint);
             Vector3 worldPosition2 = arSessionOrigin.transform.TransformPoint(currentSecondPoint);
 
-            float distance = Vector3.Distance(worldPosition1, worldPosition2);
+            Width = Vector3.Distance(worldPosition1, worldPosition2);
 
 
             if (distanceTextObject == null)
@@ -156,12 +158,12 @@ public class ARController : MonoBehaviour
             Vector3 midpoint = (firstPoint + currentSecondPoint) / 2f;
 
             if (SecondPoint == Vector3.zero)
-              distanceTextObject.transform.position = new Vector3(previewObject.transform.position.x, previewObject.transform.position.y + 0.1f, previewObject.transform.position.z);
+                distanceTextObject.transform.position = new Vector3(previewObject.transform.position.x, previewObject.transform.position.y + 0.1f, previewObject.transform.position.z);
             else
-              distanceTextObject.transform.position = new Vector3(midpoint.x, midpoint.y + 0.1f, midpoint.z); ;
+                distanceTextObject.transform.position = new Vector3(midpoint.x, midpoint.y + 0.1f, midpoint.z - 0.1f);
 
             TextMeshPro tmpText = distanceTextObject.GetComponent<TextMeshPro>();
-            tmpText.text = $"{distance:F2}m";
+            tmpText.text = $"{Width:F2}m";
 
             // LINE
             if (LineInstance == null)
@@ -182,8 +184,11 @@ public class ARController : MonoBehaviour
             }
 
             //LINE
-            if(points.Count == 2)
-             DrawWallControlker.Setpoints(firstPoint,currentSecondPoint);
+            if (points.Count == 2)
+            {
+                DrawWallControlker.Setpoints(firstPoint, currentSecondPoint);
+                previewObject.SetActive(false);
+            }
 
 
         }

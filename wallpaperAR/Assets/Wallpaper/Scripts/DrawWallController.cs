@@ -1,3 +1,5 @@
+using System.Xml;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.XR.ARFoundation;
@@ -7,7 +9,7 @@ public class DrawWallController : MonoBehaviour
 
     public GameObject WallPrefab;
 
-    private GameObject planeInstance;
+    private GameObject WallInstance;
 
     private Vector2 newTiling;
 
@@ -25,9 +27,16 @@ public class DrawWallController : MonoBehaviour
     public float LastAngle { get; private set; }
     public float IntialAngle { get; private set; }
 
+    public float metterheight;
+
+    public TextMeshPro HeightDisplayPrefab;
+
+    ARSessionOrigin ARSession;
+
     private void Start()
     {
         arCameraManager = FindObjectOfType<ARCameraManager>();
+        ARSession = ARController.Instance.arSessionOrigin;
     }
 
 
@@ -48,19 +57,19 @@ public class DrawWallController : MonoBehaviour
         // Calculate midpoint between points
         Vector3 midpoint = (point1 + point2) / 2;
 
-        if (planeInstance == null)
+        if (WallInstance == null)
         {
             // Instantiate plane prefab at midpoint if not already instantiated
-            planeInstance = Instantiate(WallPrefab, midpoint, Quaternion.identity);
-            planeInstance.SetActive(false);
+            WallInstance = Instantiate(WallPrefab, midpoint, Quaternion.identity);
+            WallInstance.SetActive(false);
             LastAngle = ARController.Instance.ConvertUnityAngle(Camera.main.transform.eulerAngles.x);
             IntialAngle = LastAngle;
-            planeInstance.transform.localScale = new Vector3(1,0.01f,IntialWallHeight);
+            WallInstance.transform.localScale = new Vector3(1,0.01f,IntialWallHeight);
         }
         else
         {
             // Update plane position to be below midpoint
-            planeInstance.transform.position = midpoint;
+            WallInstance.transform.position = midpoint;
 
             // Calculate rotation to face the direction between the points
             Vector3 direction = point2 - point1;
@@ -68,19 +77,40 @@ public class DrawWallController : MonoBehaviour
 
             // Apply rotation to the plane
 
-            planeInstance.transform.rotation = new Quaternion(rotation.x, rotation.y, rotation.z, rotation.w);
-            planeInstance.transform.eulerAngles = new Vector3(planeInstance.transform.eulerAngles.x + 90, planeInstance.transform.eulerAngles.y, planeInstance.transform.eulerAngles.z);
+            WallInstance.transform.rotation = new Quaternion(rotation.x, rotation.y, rotation.z, rotation.w);
+            WallInstance.transform.eulerAngles = new Vector3(WallInstance.transform.eulerAngles.x + 90, WallInstance.transform.eulerAngles.y, WallInstance.transform.eulerAngles.z);
 
             // Calculate scale along x-axis to fit exactly between points
             float distance = Vector3.Distance(point1, point2);
 
             // Adjust plane scale to fit between points
-            Vector3 planeScale = planeInstance.transform.localScale;
+            Vector3 planeScale = WallInstance.transform.localScale;
             planeScale.x = distance;
             newTiling.x = distance / 2;
-            planeInstance.transform.localScale = planeScale;
+            WallInstance.transform.localScale = planeScale;
 
             SetWallSize();
+
+            Bounds localBounds = WallInstance.GetComponent<MeshRenderer>().bounds;
+            Bounds worldBounds = new Bounds(ARSession.transform.TransformPoint(localBounds.center), ARSession.transform.TransformVector(localBounds.size));
+            metterheight = worldBounds.size.y;
+
+            if (HeightDisplayPrefab == null)
+            {
+                HeightDisplayPrefab = Instantiate(ARController.Instance.distanceTextPrefab,Vector3.zero, Quaternion.identity);
+            }
+
+            Vector3 textPosition = localBounds.center - new Vector3(localBounds.extents.x, 0f, 0f);
+            HeightDisplayPrefab.transform.position = new Vector3(textPosition.x - 0.1f, textPosition.y, textPosition.z);
+
+            Vector3 lookDirection = ARController.Instance.arCamera.transform.position - HeightDisplayPrefab.transform.position;
+            Quaternion lookRotation = Quaternion.LookRotation(lookDirection, Vector3.up);
+
+            Quaternion finalRotation = lookRotation * Quaternion.Euler(0f, 180f, 0f);
+            HeightDisplayPrefab.transform.rotation = finalRotation;
+            HeightDisplayPrefab.text = $"{metterheight:F2}m";
+
+
         }
 
 
@@ -95,7 +125,7 @@ public class DrawWallController : MonoBehaviour
 
         float Angle = ARController.Instance.ConvertUnityAngle(Camera.main.transform.eulerAngles.x);
 
-        Vector3 scale = planeInstance.transform.localScale;
+        Vector3 scale = WallInstance.transform.localScale;
 
         float ditance =  LastAngle - Angle;
 
@@ -109,12 +139,12 @@ public class DrawWallController : MonoBehaviour
     public void ScalePlaneZ(float value)
     {
 
-        Vector3 scale = planeInstance.transform.localScale;
+        Vector3 scale = WallInstance.transform.localScale;
 
         if (value < IntialWallHeight)
             value = IntialWallHeight;
 
-        float distanceToCube = Vector3.Distance(Camera.main.transform.position, planeInstance.transform.position);
+        float distanceToCube = Vector3.Distance(Camera.main.transform.position, WallInstance.transform.position);
 
         float distanceFactor = Mathf.InverseLerp(1, 5, distanceToCube);
 
@@ -123,19 +153,19 @@ public class DrawWallController : MonoBehaviour
         scale.z = value;// Mathf.Lerp(scale.z, newscale, lerpFactor);
 
 
-        planeInstance.transform.localScale = scale;
+        WallInstance.transform.localScale = scale;
 
         Vector3 pivotOffset = Vector3.up * (scale.z / 2);
-        planeInstance.transform.position += pivotOffset;
+        WallInstance.transform.position += pivotOffset;
 
-        Renderer renderer = planeInstance.GetComponent<Renderer>();
+        Renderer renderer = WallInstance.GetComponent<Renderer>();
         Material material = renderer.material;
 
         Vector2 newTiling = material.mainTextureScale;
         newTiling.y = scale.z / 2f;
         material.mainTextureScale = newTiling;
 
-        planeInstance.SetActive(true);
+        WallInstance.SetActive(true);
 
     }
 
