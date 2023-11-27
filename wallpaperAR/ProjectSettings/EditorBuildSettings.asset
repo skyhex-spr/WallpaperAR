@@ -6,11 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Wallpaper/Scene.unity
-    guid: b9ad6e6810ddf1d44ab45238d5f2f2c6
-  - enabled: 1
     path: Assets/Wallpaper/SplashScreen.unity
     guid: 9d5e321127d402c40b3b8015848c1ffa
+  - enabled: 1
+    path: Assets/Wallpaper/Camera.unity
+    guid: b9ad6e6810ddf1d44ab45238d5f2f2c6
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: f8ce26fe3bc69499b9be4b2378e97a94,
       type: 2}

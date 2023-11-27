@@ -10,6 +10,7 @@ public class DrawWallController : MonoBehaviour
     public GameObject WallPrefab;
 
     private GameObject WallInstance;
+    private WallController wallcontroller;
 
     private Vector2 newTiling;
 
@@ -30,6 +31,7 @@ public class DrawWallController : MonoBehaviour
     public float metterheight;
 
     public TextMeshPro HeightDisplayPrefab;
+    public Transform HeightMeterPos;
 
     ARSessionOrigin ARSession;
 
@@ -61,6 +63,7 @@ public class DrawWallController : MonoBehaviour
         {
             // Instantiate plane prefab at midpoint if not already instantiated
             WallInstance = Instantiate(WallPrefab, midpoint, Quaternion.identity);
+            wallcontroller = WallInstance.GetComponent<WallController>();
             WallInstance.SetActive(false);
             LastAngle = ARController.Instance.ConvertUnityAngle(Camera.main.transform.eulerAngles.x);
             IntialAngle = LastAngle;
@@ -100,8 +103,12 @@ public class DrawWallController : MonoBehaviour
                 HeightDisplayPrefab = Instantiate(ARController.Instance.distanceTextPrefab,Vector3.zero, Quaternion.identity);
             }
 
-            Vector3 textPosition = localBounds.center - new Vector3(localBounds.extents.x, 0f, 0f);
-            HeightDisplayPrefab.transform.position = new Vector3(textPosition.x - 0.1f, textPosition.y, textPosition.z);
+            //Vector3 parentSize = WallInstance.GetComponent<MeshRenderer>().bounds.size;
+            //float offsetX = parentSize.x / 2f;
+            //float offsetY = parentSize.y / 2f;
+
+            //Vector3 displayPosition = new Vector3(WallInstance.transform.position.x - offsetX, WallInstance.transform.position.y + offsetY + 0.1f, WallInstance.transform.position.z);
+            HeightDisplayPrefab.transform.position = wallcontroller.HeightMeterPos.position;
 
             Vector3 lookDirection = ARController.Instance.arCamera.transform.position - HeightDisplayPrefab.transform.position;
             Quaternion lookRotation = Quaternion.LookRotation(lookDirection, Vector3.up);

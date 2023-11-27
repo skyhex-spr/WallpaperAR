@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 5809390234505666989}
   - component: {fileID: 4952580428093027422}
   - component: {fileID: 8859492775411409735}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: meter
-  m_TagString: Untagged
+  m_TagString: MetterText
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -78,7 +78,7 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1000
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &8859492775411409735
 MonoBehaviour:

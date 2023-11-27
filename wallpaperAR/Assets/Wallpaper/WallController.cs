@@ -13,6 +13,8 @@ public class WallController : MonoBehaviour
     public int TileX = 2;
     public int TileY = 2;
 
+    public Transform HeightMeterPos;
+
     // Start is called before the first frame update
     void Start()
     {

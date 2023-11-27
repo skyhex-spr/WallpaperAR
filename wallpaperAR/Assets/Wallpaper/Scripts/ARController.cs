@@ -160,7 +160,9 @@ public class ARController : MonoBehaviour
             if (SecondPoint == Vector3.zero)
                 distanceTextObject.transform.position = new Vector3(previewObject.transform.position.x, previewObject.transform.position.y + 0.1f, previewObject.transform.position.z);
             else
-                distanceTextObject.transform.position = new Vector3(midpoint.x, midpoint.y + 0.1f, midpoint.z - 0.1f);
+            { 
+                distanceTextObject.transform.position = new Vector3(midpoint.x, midpoint.y + 0.1f, midpoint.z - 0.05f);
+            }
 
             TextMeshPro tmpText = distanceTextObject.GetComponent<TextMeshPro>();
             tmpText.text = $"{Width:F2}m";
