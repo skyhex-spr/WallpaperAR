@@ -20,4 +20,5 @@ public class Stone
     public Material Material;
     public bool IsSquare = true;
     public Surface Surface;
+    public bool parking = false;
 }

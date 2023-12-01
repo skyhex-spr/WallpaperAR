@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.ARFoundation;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,9 +11,14 @@ public class GameManager : MonoBehaviour
 
     public ARController Wallcontroller;
     public ARControllerGround WallcontrollerGround;
+
+    public ARPlaneManager planemanager;
+
     // Start is called before the first frame update
     void Start()
     {
+         planemanager.requestedDetectionMode = UnityEngine.XR.ARSubsystems.PlaneDetectionMode.None;
+
         if (setting.serface == Surface.Wall)
         {
             Wallcontroller.enabled = true;

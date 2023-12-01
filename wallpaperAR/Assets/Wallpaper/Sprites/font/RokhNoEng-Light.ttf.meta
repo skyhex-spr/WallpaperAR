@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 41df20008a333cc46af1b8f55d5e6263
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - RokhNoEng
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 3f6d4cb496ed05d42a19a2e73a6a0f5a, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
