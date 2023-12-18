@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/FaceTracking/FacePose.unity
+    guid: d8b65509a10894e1dbb93c799ececfd9
+  - enabled: 1
     path: Assets/Wallpaper/SplashScreen.unity
     guid: 9d5e321127d402c40b3b8015848c1ffa
   - enabled: 1

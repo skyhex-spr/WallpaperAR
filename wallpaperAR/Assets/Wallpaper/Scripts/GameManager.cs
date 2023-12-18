@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+         Application.targetFrameRate= 120;
          planemanager.requestedDetectionMode = UnityEngine.XR.ARSubsystems.PlaneDetectionMode.None;
 
         if (setting.serface == Surface.Wall)

@@ -11,9 +11,11 @@ public class ShopItem : MonoBehaviour
     public RTLTextMeshPro textmesh;
 
     public Stone stone;
+
+    private Button button;
     private void Awake()
     {
-        
+        button = GetComponent<Button>();
     }
     void Start()
     {
@@ -25,6 +27,9 @@ public class ShopItem : MonoBehaviour
         this.stone = stone;
         Image.sprite = stone.Icon;
         textmesh.text = stone.Description;
+
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(delegate { SingleItem.Instance.SetAndshowData(stone); });
     }
 
     // Update is called once per frame
